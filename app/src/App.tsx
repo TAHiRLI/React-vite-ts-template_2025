@@ -1,5 +1,7 @@
 import { ColorModeProvider } from "./context/colorMode.context";
+import { Provider } from "react-redux";
 import './App.css'
+import store from "./store/store";
 
 declare module "@mui/material/styles" {
   interface Theme {
@@ -17,11 +19,11 @@ declare module "@mui/material/styles" {
 function App() {
 
   return (
-    <>
+    <Provider store={store}>
       <ColorModeProvider>
         REACT-VITE-TS-TEMPLATE_2025
-      </ColorModeProvider> 
-    </>
+      </ColorModeProvider>
+    </Provider>
   )
 }
 
