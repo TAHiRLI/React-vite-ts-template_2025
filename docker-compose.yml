@@ -4,8 +4,8 @@ networks:
   app_network:
 
 services:
-  app:
-    image: app
+  reacttemplate:
+    image: reacttemplate
     build:
       context: app
       dockerfile: ./Dockerfile
