@@ -1,7 +1,8 @@
-import { ColorModeProvider } from "@context/colorMode.context";
-import { Provider } from "react-redux";
 import './App.css'
-import store from "@store/store";
+
+import { ColorModeProvider } from './context/colorMode.context';
+import { Provider } from "react-redux";
+import store from './store/store';
 
 declare module "@mui/material/styles" {
   interface Theme {
