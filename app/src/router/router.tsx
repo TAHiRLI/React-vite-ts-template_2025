@@ -1,10 +1,11 @@
 import { ROUTES } from "./routes";
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "@/components/layout/layout";
-// import PrivateRoute from "@/components/PrivateRoute/privateRoute";
+import PrivateRoute from "@/components/PrivateRoute/privateRoute";
 import ForgotPasswordPage from "@/pages/login/forgotPassword";
 import LoginPage from "@/pages/login/loginPage";
 import HomePage from "@/pages/home/homePage";
+import NotFoundPage from "@/pages/notFoundPage/notFoundPage";
 
 export const router = createBrowserRouter(
     [
@@ -19,13 +20,17 @@ export const router = createBrowserRouter(
         {
             path: ROUTES.BASE,
             element: (
-                // <PrivateRoute redirectUrl={ROUTES.BASE}>
+                <PrivateRoute redirectUrl={ROUTES.BASE}>
                     <Layout>
                         <HomePage />
                     </Layout>
-                // </PrivateRoute>
+                 </PrivateRoute>
             ),
         },
+        {
+            path: "*",
+            element: <NotFoundPage />
+        }
     ],
     {
         future: {
