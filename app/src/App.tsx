@@ -2,7 +2,10 @@ import './App.css'
 
 import { ColorModeProvider } from './context/colorMode.context';
 import { Provider } from "react-redux";
+import { RouterProvider } from "react-router-dom";
+
 import store from './store/store';
+import { router } from './router/router';
 
 declare module "@mui/material/styles" {
   interface Theme {
@@ -22,7 +25,7 @@ function App() {
   return (
     <Provider store={store}>
       <ColorModeProvider>
-        REACT-VITE-TS-TEMPLATE_2025
+        <RouterProvider router={router} />
       </ColorModeProvider>
     </Provider>
   )
