@@ -1,9 +1,9 @@
-import { Select, MenuItem, FormControl } from '@mui/material';
+import { Select, MenuItem, FormControl, SelectChangeEvent } from '@mui/material';
 import { useEffect } from 'react';
 import ru from "../../assets/images/ru.png";
 import en from "../../assets/images/en.png";
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 // Define option type
 interface LangOption {
@@ -14,49 +14,45 @@ interface LangOption {
 
 const LangSelect = () => {
   const { i18n } = useTranslation();
-  const location = useLocation();
-  const navigate = useNavigate();
-  
+  const [searchParams, setSearchParams] = useSearchParams();
+
   // Define available languages
   const options: LangOption[] = [
     { image: ru, value: "ru", text: "Russian" },
     { image: en, value: "en", text: "English" },
   ];
-  
+
   // Default language
-  const defaultLang = "en";
-  
+  const defaultLang = Array.isArray(i18n.options.fallbackLng)
+    ? i18n.options.fallbackLng[0]
+    : i18n.options.fallbackLng;
+
   // Function to get language from localStorage
   const getStoredLang = (): string => {
     return localStorage.getItem('selectedLanguage') || defaultLang;
   };
-  
+
   // Function to set language in localStorage
   const setStoredLang = (lang: string): void => {
     localStorage.setItem('selectedLanguage', lang);
   };
-  
+
   // Function to get language from URL
   const getUrlLang = (): string | null => {
-    const searchParams = new URLSearchParams(location.search);
     return searchParams.get('lang');
   };
-  
+
   // Function to update URL with language parameter
   const updateUrlLang = (lang: string): void => {
-    const searchParams = new URLSearchParams(location.search);
     searchParams.set('lang', lang);
-    navigate({
-      pathname: location.pathname,
-      search: searchParams.toString()
-    }, { replace: true });
+    setSearchParams(searchParams); // Update the URL with the new language parameter
   };
-  
+
   // Initialize language based on URL or localStorage
   useEffect(() => {
     const urlLang = getUrlLang();
     const storedLang = getStoredLang();
-    
+
     if (urlLang) {
       // Check if the URL language is supported
       const isSupported = options.some(option => option.value === urlLang);
@@ -75,11 +71,11 @@ const LangSelect = () => {
       i18n.changeLanguage(storedLang);
       updateUrlLang(storedLang);
     }
-  }, [location.search]);
-  
+  }, [searchParams]); // Initialize language on component mount
+
   // Handle language change
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>): void => {
-    const newLang = event.target.value as string;
+  const handleChange = (event: SelectChangeEvent<string>): void => {
+    const newLang = event.target.value;
     i18n.changeLanguage(newLang);
     setStoredLang(newLang);
     updateUrlLang(newLang);
@@ -89,12 +85,12 @@ const LangSelect = () => {
   const getCurrentLangOption = (): LangOption => {
     const currentLang = i18n.language;
     // We know one of these will always return a value because we have a default option
-    const option = options.find(option => option.value === currentLang) || 
-                  options.find(option => option.value === defaultLang) || 
-                  options[0]; // Fallback to first option as last resort
+    const option = options.find(option => option.value === currentLang) ||
+      options.find(option => option.value === defaultLang) ||
+      options[0]; // Fallback to first option as last resort
     return option;
   };
-  
+
   return (
     <FormControl variant="standard" size="small">
       <Select
