@@ -14,13 +14,15 @@
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^7.0.1",
     "@reduxjs/toolkit": "^2.6.1",
+    "formik": "^2.4.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.30.0",
     "redux-offline": "^2.0.0",
     "redux-persist": "^6.0.0",
-    "universal-cookie": "^8.0.1"
+    "universal-cookie": "^8.0.1",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

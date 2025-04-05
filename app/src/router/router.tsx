@@ -9,6 +9,7 @@ import NotFoundPage from "@/pages/notFoundPage/notFoundPage";
 // router.tsx
 import TestRoleButtons from "@/components/testRoleButtons/testRoleButtons";
 import { AdminPage, ManagerPage, SharedPage } from "@/pages/testPages/testPages";
+import RegisterPage from "@/pages/login/registerPage";
 
 export const router = createBrowserRouter(
     [
@@ -55,6 +56,12 @@ export const router = createBrowserRouter(
             path: ROUTES.LOGIN,
             element: (
                 <LoginPage />
+            ),
+        },
+        {
+            path: ROUTES.REGISTER,
+            element: (
+                <RegisterPage />
             ),
         },
         {
