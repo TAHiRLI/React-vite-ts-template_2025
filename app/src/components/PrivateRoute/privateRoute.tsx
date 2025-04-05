@@ -8,7 +8,7 @@ const cookies = new Cookies();
 
 interface PrivateRouteProps {
   redirectUrl?: string; // Made callbackUrl optional
-  roles?: string; // Made roles optional
+  roles?: string[]; // Made roles optional
   children: ReactNode; // Directly specify children as ReactNode
 }
 
@@ -34,12 +34,13 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ redirectUrl, roles, childre
     }
 
     // User is authenticated, now check roles if specified
-    if (roles) {
-      const userRole = user.role;
-
-      if (userRole !== roles) {
+    if (roles && roles.length > 0) {
+      const userRoles = user.roles || [];
+      const hasRequiredRole = roles.some(role => userRoles.includes(role));
+      
+      if (!hasRequiredRole) {
         // User lacks required roles
-        alert(`You are not authorized. Only users with the role ${roles} can view this page.`);
+        alert(`You are not authorized. Only users with the following roles can view this page: ${roles.join(', ')}`);
 
         // Capture current location for redirection
         const currentPath = location.pathname + location.search;

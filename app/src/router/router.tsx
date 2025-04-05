@@ -6,12 +6,56 @@ import ForgotPasswordPage from "@/pages/login/forgotPassword";
 import LoginPage from "@/pages/login/loginPage";
 import HomePage from "@/pages/home/homePage";
 import NotFoundPage from "@/pages/notFoundPage/notFoundPage";
+// router.tsx
+import TestRoleButtons from "@/components/testRoleButtons/testRoleButtons";
+import { AdminPage, ManagerPage, SharedPage } from "@/pages/testPages/testPages";
 
 export const router = createBrowserRouter(
     [
         {
+            path: ROUTES.ADMIN,
+            element: (
+                <>
+                    <TestRoleButtons />
+                    <PrivateRoute roles={["admin"]}>
+                        <Layout>
+                            <AdminPage />
+                        </Layout>
+                    </PrivateRoute>
+                </>
+            ),
+        },
+        {
+            path: ROUTES.MANAGER,
+            element: (
+                <>
+                    <TestRoleButtons />
+                    <PrivateRoute roles={["manager"]}>
+                        <Layout>
+                            <ManagerPage />
+                        </Layout>
+                    </PrivateRoute>
+                </>
+            ),
+        },
+        {
+            path: ROUTES.SHARED,
+            element: (
+                <>
+                    <TestRoleButtons />
+                    <PrivateRoute roles={["admin", "manager"]}>
+                        <Layout>
+                            <SharedPage />
+                        </Layout>
+                    </PrivateRoute>
+                </>
+            ),
+        },
+        {
             path: ROUTES.LOGIN,
-            element: <LoginPage />,
+            element: (
+                <LoginPage />
+            ),
         },
         {
             path: ROUTES.FORGOT_PASSWORD,
@@ -20,11 +64,14 @@ export const router = createBrowserRouter(
         {
             path: ROUTES.BASE,
             element: (
-                <PrivateRoute redirectUrl={ROUTES.BASE}>
-                    <Layout>
-                        <HomePage />
-                    </Layout>
-                 </PrivateRoute>
+                <>
+                    <TestRoleButtons />
+                    <PrivateRoute redirectUrl={ROUTES.BASE}>
+                        <Layout>
+                            <HomePage />
+                        </Layout>
+                    </PrivateRoute>
+                </>
             ),
         },
         {
