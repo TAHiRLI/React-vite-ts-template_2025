@@ -4,6 +4,7 @@ import ru from "../../assets/images/ru.png";
 import en from "../../assets/images/en.png";
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
+// import i18n from '../../../i18n'; // Use direct import of i18n
 
 // Define option type
 interface LangOption {
@@ -13,7 +14,7 @@ interface LangOption {
 }
 
 const LangSelect = () => {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation(); // Only get translation function, not i18n
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Define available languages
@@ -22,10 +23,20 @@ const LangSelect = () => {
     { image: en, value: "en", text: "English" },
   ];
 
-  // Default language
-  const defaultLang = Array.isArray(i18n.options.fallbackLng)
-    ? i18n.options.fallbackLng[0]
-    : i18n.options.fallbackLng;
+  // Default language with safety check
+  const defaultLang = (() => {
+    try {
+      if (i18n.options && i18n.options.fallbackLng) {
+        return Array.isArray(i18n.options.fallbackLng)
+          ? i18n.options.fallbackLng[0]
+          : i18n.options.fallbackLng;
+      }
+      return "en"; // Default if options or fallbackLng is missing
+    } catch (error) {
+      console.error("i18n options error:", error);
+      return "en"; // Default in case of any error
+    }
+  })();
 
   // Function to get language from localStorage
   const getStoredLang = (): string => {
@@ -53,37 +64,53 @@ const LangSelect = () => {
     const urlLang = getUrlLang();
     const storedLang = getStoredLang();
 
-    if (urlLang) {
-      // Check if the URL language is supported
-      const isSupported = options.some(option => option.value === urlLang);
-      if (isSupported) {
-        // If URL language is supported, use it and update localStorage
-        i18n.changeLanguage(urlLang);
-        setStoredLang(urlLang);
+    try {
+      if (urlLang) {
+        // Check if the URL language is supported
+        const isSupported = options.some(option => option.value === urlLang);
+        if (isSupported) {
+          // If URL language is supported, use it and update localStorage
+          if (typeof i18n.changeLanguage === 'function') {
+            i18n.changeLanguage(urlLang);
+          }
+          setStoredLang(urlLang);
+        } else {
+          // If URL language is not supported, use default and update URL
+          if (typeof i18n.changeLanguage === 'function') {
+            i18n.changeLanguage(defaultLang);
+          }
+          setStoredLang(defaultLang);
+          updateUrlLang(defaultLang);
+        }
       } else {
-        // If URL language is not supported, use default and update URL
-        i18n.changeLanguage(defaultLang);
-        setStoredLang(defaultLang);
-        updateUrlLang(defaultLang);
+        // If no URL language, use localStorage language and update URL
+        if (typeof i18n.changeLanguage === 'function') {
+          i18n.changeLanguage(storedLang);
+        }
+        updateUrlLang(storedLang);
       }
-    } else {
-      // If no URL language, use localStorage language and update URL
-      i18n.changeLanguage(storedLang);
-      updateUrlLang(storedLang);
+    } catch (error) {
+      console.error("Error changing language:", error);
     }
-  }, [searchParams]); // Initialize language on component mount
+  }, []); // Only run once on component mount, removed searchParams dependency
 
   // Handle language change
   const handleChange = (event: SelectChangeEvent<string>): void => {
-    const newLang = event.target.value;
-    i18n.changeLanguage(newLang);
-    setStoredLang(newLang);
-    updateUrlLang(newLang);
+    try {
+      const newLang = event.target.value;
+      if (typeof i18n.changeLanguage === 'function') {
+        i18n.changeLanguage(newLang);
+      }
+      setStoredLang(newLang);
+      updateUrlLang(newLang);
+    } catch (error) {
+      console.error("Error handling language change:", error);
+    }
   };
 
-  // Find current language option with non-null assertion
+  // Find current language option with safety checks
   const getCurrentLangOption = (): LangOption => {
-    const currentLang = i18n.language;
+    const currentLang = i18n.language || getStoredLang();
     // We know one of these will always return a value because we have a default option
     const option = options.find(option => option.value === currentLang) ||
       options.find(option => option.value === defaultLang) ||
@@ -94,7 +121,7 @@ const LangSelect = () => {
   return (
     <FormControl variant="standard" size="small">
       <Select
-        value={i18n.language}
+        value={i18n.language || getStoredLang()}
         onChange={handleChange}
         className="lang-select"
         renderValue={() => {

@@ -1,4 +1,3 @@
-import "./index.scss";
 import * as yup from "yup";
 
 import { Button, TextField } from "@mui/material";
@@ -7,8 +6,6 @@ import { Formik } from "formik";
 import LangSelect from "../../components/langSelect/langSelect";
 import Swal from "sweetalert2";
 import { authService } from "@/API/Services/auth.service";
-//when it will be ready,we will use this import
-import img from "../../assets/images/Documents_login.png";
 import { useColorMode } from "../../context/colorMode.context";
 import { useTranslation } from "react-i18next";
 
@@ -65,9 +62,6 @@ const ForgotPasswordPage: FC = () => {
       <div className="container md:px-[60px] absolute z-10">
         <div className="content grid sm:grid-cols-2 h-max rounded-lg overflow-hidden border bg-white">
           <div className="content_info p-6 py-14 relative">
-            <div className="content_info_image">
-              <img src={img} alt="clock" className="w-[50%] m-auto" />
-            </div>
             <div className="content_info_salut text-center">
               <h4 className="text-2xl font-semibold mt-5">
                 {t("static:wellcomeTo")} <span>{t("app:name")}</span>
