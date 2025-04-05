@@ -3,7 +3,8 @@ import './App.css'
 import { ColorModeProvider } from './context/colorMode.context';
 import { Provider } from "react-redux";
 import { RouterProvider } from "react-router-dom";
-
+import { PersistGate } from 'redux-persist/integration/react';
+import { persistor } from './store/store';
 import store from './store/store';
 import { router } from './router/router';
 
@@ -24,9 +25,11 @@ function App() {
 
   return (
     <Provider store={store}>
-      <ColorModeProvider>
-        <RouterProvider router={router} />
-      </ColorModeProvider>
+      <PersistGate loading={null} persistor={persistor}>
+        <ColorModeProvider>
+          <RouterProvider router={router} />
+        </ColorModeProvider>
+      </PersistGate>
     </Provider>
   )
 }
