@@ -1,5 +1,5 @@
 import './App.css'
-
+import "../i18n"
 import { ColorModeProvider } from './context/colorMode.context';
 import { Provider } from "react-redux";
 import { RouterProvider } from "react-router-dom";
