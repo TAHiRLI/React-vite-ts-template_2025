@@ -1,10 +1,12 @@
+import * as yup from "yup";
+
+import { Alert, Box, Button, CircularProgress, Container, TextField, Typography } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 // registerPage.tsx
 import React, { useState } from "react";
-import { useFormik } from "formik";
-import * as yup from "yup";
-import { TextField, Button, Container, Typography, Box, CircularProgress, Alert } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+
 import { ROUTES } from "@/router/routes";
+import { useFormik } from "formik";
 
 // Define the user type
 type User = {
@@ -29,7 +31,7 @@ const RegisterPage: React.FC = () => {
   const [success, setSuccess] = useState(false);
   
   // Initial auth state
-  const [authState, setAuthState] = useState<AuthState>({
+  const [_, setAuthState] = useState<AuthState>({
     user: null,
     isAuthenticated: false,
     loading: false,
