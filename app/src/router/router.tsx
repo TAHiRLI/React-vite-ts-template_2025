@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Layout from "@/components/layout/layout";
 import PrivateRoute from "@/components/PrivateRoute/privateRoute";
 import ForgotPasswordPage from "@/pages/login/forgotPassword";
+import ResetPasswordPage from "@/pages/login/resetPassword";
 import LoginPage from "@/pages/login/loginPage";
 import HomePage from "@/pages/home/homePage";
 import NotFoundPage from "@/pages/notFoundPage/notFoundPage";
@@ -67,6 +68,10 @@ export const router = createBrowserRouter(
         {
             path: ROUTES.FORGOT_PASSWORD,
             element: <ForgotPasswordPage />,
+        },
+        {
+            path: ROUTES.RESET_PASSWORD,
+            element: <ResetPasswordPage />,
         },
         {
             path: ROUTES.BASE,

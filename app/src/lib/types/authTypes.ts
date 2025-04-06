@@ -7,6 +7,7 @@ export interface TUser {
     email: string;
     roles: string[];
     token?: string;
+    expiresAt?: Date;
   }
   
   export interface AuthState {

@@ -1,105 +1,63 @@
 // loginPage.tsx
-import React, { useState } from "react";
+import React from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { TextField, Button, Container, Typography, Box, CircularProgress, Alert } from "@mui/material";
-import Cookies from "universal-cookie";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "@/router/routes";
-
-const cookies = new Cookies();
-
-// Define the user type as mentioned in your requirements
-type User = {
-  id: string;
-  fullname: string;
-  username: string;
-  email: string;
-  roles: string[];
-};
-
-type AuthState = {
-  user: User | null;
-  isAuthenticated: boolean;
-  loading: boolean;
-  error: string | null;
-};
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../store/slices/auth.slice";
+import { AppDispatch, RootState } from "../../store/store";
+import { LoginCredentials } from "../../lib/types/authTypes";
 
 const validationSchema = yup.object({
-  email: yup.string().email("Enter a valid email").required("Email is required"),
+  username: yup.string().required("Username is required"),
   password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
 });
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const redirectPath = new URLSearchParams(location.search).get("redirect") || ROUTES.BASE;
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
   
-  // Initial auth state
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    isAuthenticated: false,
-    loading: false,
-    error: null
-  });
+  // Get auth state from Redux store instead of local state
+  const { loading, error, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  
+  const redirectPath = new URLSearchParams(location.search).get("redirect") || ROUTES.BASE;
 
-  const formik = useFormik<{ email: string; password: string }>({
-    initialValues: { email: "", password: "" },
+  // Redirect if already authenticated
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate(redirectPath);
+    }
+  }, [isAuthenticated, navigate, redirectPath]);
+
+  // Destructure useFormik hook directly
+  const { values, touched, errors, handleChange, handleSubmit } = useFormik<LoginCredentials>({
+    initialValues: { 
+      username: "",
+      password: "" 
+    },
     validationSchema,
     onSubmit: (values) => {
-      setLoading(true);
-      setError(null);
-      setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      
-      // Simulate API delay
-      setTimeout(() => {
-        try {
-          // Create a full user object matching the required structure
-          const user: User = {
-            id: "user-123",
-            fullname: "Demo User",
-            username: values.email.split('@')[0],
-            email: values.email,
-            roles: ["user"]
-          };
-          
-          // Create userData with token and user info
-          const userData = { 
-            token: "test-token-" + Math.random().toString(36).substring(2),
-            ...user
-          };
-          
-          // Update auth state
-          setAuthState({
-            user,
-            isAuthenticated: true,
-            loading: false,
-            error: null
-          });
-          
-          // Save in cookies as before
-          cookies.set("user", userData, { path: "/", secure: true, sameSite: "strict" });
-          
-          // Add token to URL for demo purposes
-          const currentUrl = new URL(window.location.href);
-          currentUrl.searchParams.set("token", userData.token);
-          window.history.replaceState({}, '', currentUrl.toString());
-          
-          // Navigate to redirect path after login
-          navigate(redirectPath);
-        } catch (err) {
-          setError("Login failed. Please try again.");
-          setAuthState(prev => ({
-            ...prev,
-            loading: false,
-            error: "Login failed. Please try again."
-          }));
-        } finally {
-          setLoading(false);
-        }
-      }, 700); // Add slight delay to simulate API call
+      // Use the Redux action to handle login
+      dispatch(loginUser({
+        username: values.username,
+        password: values.password
+      }))
+        .then(userData => {
+          // Add token to URL for demo purposes (if needed)
+          if (userData && userData.token) {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set("token", userData.token);
+            window.history.replaceState({}, '', currentUrl.toString());
+          }
+          // Navigation is handled by the useEffect
+        })
+        .catch(err => {
+          // Error is handled by the Redux action
+          console.error("Login failed:", err);
+        });
     },
   });
 
@@ -116,26 +74,30 @@ const LoginPage: React.FC = () => {
           </Alert>
         )}
         
-        <form onSubmit={formik.handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
             margin="normal"
-            label="Email"
+            label="Username"
+            name="username"
             variant="outlined"
-            {...formik.getFieldProps("email")}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={formik.touched.email && formik.errors.email}
+            value={values.username}
+            onChange={handleChange}
+            error={touched.username && Boolean(errors.username)}
+            helperText={touched.username && errors.username}
             disabled={loading}
           />
           <TextField
             fullWidth
             margin="normal"
             label="Password"
+            name="password"
             type="password"
             variant="outlined"
-            {...formik.getFieldProps("password")}
-            error={formik.touched.password && Boolean(formik.errors.password)}
-            helperText={formik.touched.password && formik.errors.password}
+            value={values.password}
+            onChange={handleChange}
+            error={touched.password && Boolean(errors.password)}
+            helperText={touched.password && errors.password}
             disabled={loading}
           />
           <Box sx={{ textAlign: "right", mt: 1 }}>

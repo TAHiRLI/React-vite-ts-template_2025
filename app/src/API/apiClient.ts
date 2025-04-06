@@ -4,7 +4,7 @@ import axios from "axios";
 const cookies = new Cookies();
 
 // Create Axios instance for Admin API
-export const adminApiClient = axios.create({
+export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 100000,
 });
@@ -26,4 +26,4 @@ const addAuthInterceptor = (apiClient: any) => {
 };
 
 // Apply Interceptors
-addAuthInterceptor(adminApiClient);
+addAuthInterceptor(apiClient);
