@@ -41,7 +41,7 @@ const LoginPage: React.FC = () => {
         fullname: "Test User",
         username: values.username,
         email: `${values.username}@example.com`,
-        roles: ["user"],
+        roles: ["manager"],
         token: "sample-jwt-token"
     };
       dispatch(loginUser(userData))

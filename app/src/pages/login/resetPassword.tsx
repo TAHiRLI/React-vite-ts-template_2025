@@ -1,19 +1,21 @@
 import * as React from "react";
 import * as yup from "yup";
+
 import { Button, IconButton, InputAdornment, TextField } from "@mui/material";
-import { useFormik } from "formik";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { apiClient } from "../../API/apiClient";
 import { FC, useEffect } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+
+import LangSelect from "../../components/langSelect/langSelect";
 import Swal from "sweetalert2";
 import { TUser } from "../../lib/types/authTypes";
-import { useTranslation } from "react-i18next";
+import { apiClient } from "../../API/apiClient";
 import dayjs from "dayjs";
-import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../store/slices/auth.slice";
-import { useSearchParams } from "react-router-dom";
-import LangSelect from "../../components/langSelect/langSelect";
 import { useColorMode } from "../../context/colorMode.context";
+import { useDispatch } from "react-redux";
+import { useFormik } from "formik";
+import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface IResetPasswordFormValues {
     username: string;

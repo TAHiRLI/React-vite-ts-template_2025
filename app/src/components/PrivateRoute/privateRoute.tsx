@@ -1,8 +1,10 @@
 import React, { ReactNode, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Cookies from "universal-cookie";
-import { useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "@/router/routes";
+import { logout } from "@/store/slices/auth.slice";
+import { useDispatch } from "react-redux";
 
 const cookies = new Cookies();
 
@@ -16,7 +18,9 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ redirectUrl, roles, childre
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null); // Track authentication state
   const navigate = useNavigate();
   const location = useLocation();
-
+  const dispatch = useDispatch(); 
+  
+  
   useEffect(() => {
     let user = cookies.get("user");
 
@@ -42,12 +46,10 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ redirectUrl, roles, childre
         // User lacks required roles
         alert(`You are not authorized. Only users with the following roles can view this page: ${roles.join(', ')}`);
 
-        // Capture current location for redirection
-        const currentPath = location.pathname + location.search;
-        const redirectPath = redirectUrl || currentPath;
-
         // Redirect to login with the redirect parameter
-        navigate(`${ROUTES.LOGIN}?redirect=${encodeURIComponent(redirectPath)}`);
+        navigate(`${ROUTES.LOGIN}`);
+
+        dispatch(logout())
         return;
       }
     }
