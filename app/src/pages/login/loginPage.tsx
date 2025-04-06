@@ -1,14 +1,16 @@
+import * as yup from "yup";
+
+import { Alert, Box, Button, CircularProgress, Container, TextField, Typography } from "@mui/material";
+import { AppDispatch, RootState } from "../../store/store";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { LoginCredentials, TUser } from "../../lib/types/authTypes";
+import { useDispatch, useSelector } from "react-redux";
+
+import { ROUTES } from "@/router/routes";
 // loginPage.tsx
 import React from "react";
-import { useFormik } from "formik";
-import * as yup from "yup";
-import { TextField, Button, Container, Typography, Box, CircularProgress, Alert } from "@mui/material";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { ROUTES } from "@/router/routes";
-import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../store/slices/auth.slice";
-import { AppDispatch, RootState } from "../../store/store";
-import { LoginCredentials } from "../../lib/types/authTypes";
+import { useFormik } from "formik";
 
 const validationSchema = yup.object({
   username: yup.string().required("Username is required"),
@@ -21,16 +23,9 @@ const LoginPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   
   // Get auth state from Redux store instead of local state
-  const { loading, error, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { loading, error } = useSelector((state: RootState) => state.auth);
   
   const redirectPath = new URLSearchParams(location.search).get("redirect") || ROUTES.BASE;
-
-  // Redirect if already authenticated
-  React.useEffect(() => {
-    if (isAuthenticated) {
-      navigate(redirectPath);
-    }
-  }, [isAuthenticated, navigate, redirectPath]);
 
   // Destructure useFormik hook directly
   const { values, touched, errors, handleChange, handleSubmit } = useFormik<LoginCredentials>({
@@ -41,23 +36,17 @@ const LoginPage: React.FC = () => {
     validationSchema,
     onSubmit: (values) => {
       // Use the Redux action to handle login
-      dispatch(loginUser({
+      const userData: TUser = {
+        id: "user-id-123",
+        fullname: "Test User",
         username: values.username,
-        password: values.password
-      }))
-        .then(userData => {
-          // Add token to URL for demo purposes (if needed)
-          if (userData && userData.token) {
-            const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set("token", userData.token);
-            window.history.replaceState({}, '', currentUrl.toString());
-          }
-          // Navigation is handled by the useEffect
-        })
-        .catch(err => {
-          // Error is handled by the Redux action
-          console.error("Login failed:", err);
-        });
+        email: `${values.username}@example.com`,
+        roles: ["user"],
+        token: "sample-jwt-token"
+    };
+      dispatch(loginUser(userData))
+      
+      navigate(redirectPath); 
     },
   });
 

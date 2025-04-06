@@ -1,7 +1,8 @@
-import { AppDispatch } from "../store";
+import { AuthState, TUser } from "../../lib/types/authTypes";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+
+import { AppDispatch } from "../store";
 import Cookies from "universal-cookie";
-import { AuthState, TUser, LoginCredentials } from "../../lib/types/authTypes";
 
 const cookies = new Cookies();
 
@@ -77,25 +78,9 @@ export const {
 export default authSlice;
 
 // Async action creator example - can be used when integrating with an API service
-export const loginUser = (credentials: LoginCredentials) =>
+export const loginUser = (userData: TUser) =>
     async (dispatch: AppDispatch) => {
         try {
-            dispatch(loginStart());
-
-            // API call should be made here
-            // const response = await authService.login(credentials);
-            // const userData = response.data;
-
-            // Example user data for successful login (in real implementation, this will come from an API)
-            const userData: TUser = {
-                id: "user-id-123",
-                fullname: "Test User",
-                username: credentials.username,
-                email: `${credentials.username}@example.com`,
-                roles: ["user"],
-                token: "sample-jwt-token"
-            };
-
             dispatch(loginSuccess(userData));
             return userData;
         } catch (error) {
