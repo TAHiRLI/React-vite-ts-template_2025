@@ -4,17 +4,18 @@ import { persistReducer, persistStore } from "redux-persist";
 //import slices
 
 import storage from "redux-persist/lib/storage"; // Default localStorage for web
+import authSlice from "./slices/auth.slice";
 
 
 //Define persist configuration
 const persistConfig = {
     key: "root",
     storage,
-    whiteList: ['auth']
+    whitelist: ['auth']
 };
 
 const rootReducer = combineReducers({
-
+    auth: authSlice.reducer,
 });
 
 // Wrap rootReducer with persistReducer
@@ -27,9 +28,10 @@ const store = configureStore({
             serializableCheck: {
                 // Ignore these action types
                 ignoredActions: ["persist/PERSIST", "persist/REHYDRATE",
-                    "persist/PURGE",
+                    "persist/PURGE", "auth/loginSuccess", "auth/setUser"
 
                 ],
+                ignoredPaths: ['auth.user'],
             },
         }),
 });
