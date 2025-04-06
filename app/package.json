@@ -1,9 +1,10 @@
 {
   "name": "app",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
+    "version-bump": "node version-bump",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
