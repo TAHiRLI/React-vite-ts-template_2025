@@ -1,16 +1,17 @@
-import { ROUTES } from "./routes";
-import { createBrowserRouter } from "react-router-dom";
-import Layout from "@/components/layout/layout";
-import PrivateRoute from "@/components/PrivateRoute/privateRoute";
+import { AdminPage, ManagerPage, SharedPage } from "@/pages/testPages/testPages";
+
 import ForgotPasswordPage from "@/pages/login/forgotPassword";
-import ResetPasswordPage from "@/pages/login/resetPassword";
-import LoginPage from "@/pages/login/loginPage";
 import HomePage from "@/pages/home/homePage";
+import Layout from "@/components/layout/layout";
+import LoginPage from "@/pages/login/loginPage";
 import NotFoundPage from "@/pages/notFoundPage/notFoundPage";
+import PrivateRoute from "@/components/PrivateRoute/privateRoute";
+import { ROUTES } from "./routes";
+import RegisterPage from "@/pages/login/registerPage";
+import ResetPasswordPage from "@/pages/login/resetPassword";
 // router.tsx
 import TestRoleButtons from "@/components/testRoleButtons/testRoleButtons";
-import { AdminPage, ManagerPage, SharedPage } from "@/pages/testPages/testPages";
-import RegisterPage from "@/pages/login/registerPage";
+import { createBrowserRouter } from "react-router-dom";
 
 export const router = createBrowserRouter(
     [
@@ -90,14 +91,6 @@ export const router = createBrowserRouter(
             path: "*",
             element: <NotFoundPage />
         }
-    ],
-    {
-        future: {
-            v7_fetcherPersist: true,
-            v7_normalizeFormMethod: true,
-            v7_partialHydration: true,
-            v7_relativeSplatPath: true,
-            v7_skipActionErrorRevalidation: true,
-        },
-    }
+    ]
+   
 );
